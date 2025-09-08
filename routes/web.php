@@ -22,3 +22,9 @@ Route::resource('lokasi', LokasiController::class);
 
 Route::resource('barang', App\Http\Controllers\BarangController::class);
 
+Route::resource('asset', App\Http\Controllers\AssetController::class);
+
+Route::resource('pengajuan', App\Http\Controllers\PengajuanController::class);
+
+Route::resource('monitoring', App\Http\Controllers\MonitoringController::class);
+
