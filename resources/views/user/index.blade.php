@@ -2,6 +2,18 @@
 @section('title', 'Data User')
 @section('content')
 
+<style>
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.btn .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+</style>
+
 <!-- All Modals Section -->
 @include('components.notification-modal')
 
@@ -11,28 +23,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title d-flex align-items-center gap-2">
-                    <i class="fas fa-user-circle tex    // Reset forms on modal hide
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('hidden.bs.modal', function() {
-            const form = this.querySelector('form');
-            if (form) {
-                form.reset();
-                form.classList.remove('submitted');
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    // Reset button content based on form type
-                    if (form.id === 'deleteUserForm') {
-                        submitBtn.innerHTML = '<i class="fas fa-trash me-1"></i>Hapus';
-                    } else if (form.id === 'editUserForm') {
-                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan Perubahan';
-                    } else {
-                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan';
-                    }
-                }
-            }
-        });
-    });</i>
+                    <i class="fas fa-user-circle text-primary"></i>
                     Detail User
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -454,6 +445,29 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Add loading animation to all form submits
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                // Save original button content
+                const originalContent = submitBtn.innerHTML;
+                
+                // Add loading spinner and disable button
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading...`;
+                
+                // Reset button after 5 seconds if form hasn't submitted (error case)
+                setTimeout(() => {
+                    if (!form.classList.contains('submitted')) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalContent;
+                    }
+                }, 5000);
+            }
+            form.classList.add('submitted');
+        });
+    });
     // Function to toggle password visibility
     window.togglePassword = function(inputId) {
         const input = document.getElementById(inputId);
@@ -522,41 +536,33 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteModal.show();
     };
 
-    // Handle form submissions with loading animation
+    // Handle form submissions (disable submit button)
     document.querySelectorAll('.modal form').forEach(form => {
         form.addEventListener('submit', function() {
             const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                // Save original button content
-                const originalContent = submitBtn.innerHTML;
-                
-                // Disable button and show loading animation
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Loading...
-                `;
-                
-                // Restore button state after form submission (for error cases)
-                setTimeout(() => {
-                    if (!form.classList.contains('submitted')) {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalContent;
-                    }
-                }, 5000);
-            }
-            form.classList.add('submitted');
+            if (submitBtn) submitBtn.disabled = true;
         });
     });
 
-    // Reset forms on modal hide and restore button states
+    // Reset forms and buttons on modal hide
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('hidden.bs.modal', function() {
             const form = this.querySelector('form');
             if (form) {
                 form.reset();
+                form.classList.remove('submitted');
                 const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn) submitBtn.disabled = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    // Reset button content based on form type
+                    if (form.id === 'deleteUserForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-trash me-1"></i>Hapus';
+                    } else if (form.id === 'editUserForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan Perubahan';
+                    } else {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan';
+                    }
+                }
             }
         });
     });
