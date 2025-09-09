@@ -312,15 +312,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle form submissions
+    // Handle form submissions with loading animation
     document.querySelectorAll('.modal form').forEach(form => {
         form.addEventListener('submit', function() {
             const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.disabled = true;
+            if (submitBtn) {
+                // Save original button content
+                const originalContent = submitBtn.innerHTML;
+                
+                // Disable button and show loading animation
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Loading...
+                `;
+                
+                // Restore button state after form submission (for error cases)
+                setTimeout(() => {
+                    if (!form.classList.contains('submitted')) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalContent;
+                    }
+                }, 5000);
+            }
+            form.classList.add('submitted');
         });
     });
 
-    // Reset forms on modal hide
+    // Reset forms on modal hide and restore button states
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function() {
+            const form = this.querySelector('form');
+            if (form) {
+                form.reset();
+                form.classList.remove('submitted');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    if (form.id === 'deleteLokasiForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-trash me-1"></i>Hapus';
+                    } else if (form.id === 'editLokasiForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan Perubahan';
+                    } else {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan';
+                    }
+                }
+            }
+        });
+    });
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('hidden.bs.modal', function() {
             const form = this.querySelector('form');

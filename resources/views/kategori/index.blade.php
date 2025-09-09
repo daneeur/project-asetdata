@@ -251,6 +251,33 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
 
+    // Handle form submissions with loading animation
+    document.querySelectorAll('.modal form').forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                // Save original button content
+                const originalContent = submitBtn.innerHTML;
+                
+                // Disable button and show loading animation
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Loading...
+                `;
+                
+                // Restore button state after form submission (for error cases)
+                setTimeout(() => {
+                    if (!form.classList.contains('submitted')) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalContent;
+                    }
+                }, 5000);
+            }
+            form.classList.add('submitted');
+        });
+    });
+
     // Handle modal events
     document.querySelectorAll('.modal').forEach(modalElement => {
         modalElement.addEventListener('shown.bs.modal', function() {
@@ -270,7 +297,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clean up after hide
             this.classList.remove('hiding');
             const form = this.querySelector('form');
-            if (form) form.reset();
+            if (form) {
+                form.reset();
+                form.classList.remove('submitted');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    // Reset button content based on form type
+                    if (form.id === 'deleteKategoriForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-trash me-1"></i>Hapus';
+                    } else if (form.id === 'editKategoriForm') {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan Perubahan';
+                    } else {
+                        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Simpan';
+                    }
+                }
+            }
         });
     });
 });
