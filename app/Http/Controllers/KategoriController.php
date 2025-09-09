@@ -28,7 +28,7 @@ class KategoriController extends Controller
             'nama_kategori' => $request->nama_kategori,
         ]);
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan');
+        return redirect()->route('kategori.index')->with('success', 'Kategori ' . $request->nama_kategori . ' berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -48,13 +48,15 @@ class KategoriController extends Controller
             'nama_kategori' => $request->nama_kategori,
         ]);
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui');
+        return redirect()->route('kategori.index')->with('success', 'Kategori ' . $request->nama_kategori . ' berhasil diperbarui');
     }
 
     public function destroy($id)
     {
         $kategori = Kategori::findOrFail($id);
         $kategori->delete();
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus');
+        $namaKategori = $kategori->nama_kategori;
+        $kategori->delete();
+        return redirect()->route('kategori.index')->with('success', 'Kategori ' . $namaKategori . ' berhasil dihapus');
     }
 }

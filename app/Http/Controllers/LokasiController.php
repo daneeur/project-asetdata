@@ -23,7 +23,7 @@ class LokasiController extends Controller
         Lokasi::create($request->all());
 
         return redirect()->route('lokasi.index')
-            ->with('success', 'Lokasi berhasil ditambahkan.');
+            ->with('success', 'Lokasi ' . $request->nama_lokasi . ' berhasil ditambahkan');
     }
 
     public function update(Request $request, Lokasi $lokasi)
@@ -36,7 +36,7 @@ class LokasiController extends Controller
         $lokasi->update($request->all());
 
         return redirect()->route('lokasi.index')
-            ->with('success', 'Lokasi berhasil diperbarui.');
+            ->with('success', 'Lokasi ' . $request->nama_lokasi . ' berhasil diperbarui');
     }
 
     public function destroy(Lokasi $lokasi)
@@ -44,6 +44,6 @@ class LokasiController extends Controller
         $lokasi->delete();
 
         return redirect()->route('lokasi.index')
-            ->with('success', 'Lokasi berhasil dihapus.');
+            ->with('success', 'Lokasi ' . $lokasi->nama_lokasi . ' berhasil dihapus');
     }
 }
