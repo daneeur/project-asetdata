@@ -10,4 +10,12 @@ class PengajuanController extends Controller
     {
         return view('pengajuan.index');
     }
+
+    public function create(Request $request)
+    {
+        $assetId = $request->query('asset_id');
+        return view('pengajuan.create', compact('assetId'));
+    }
+
+
 }

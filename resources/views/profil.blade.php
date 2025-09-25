@@ -95,7 +95,7 @@
     <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-4">
         @csrf
         @method('PUT')
-        <img src="{{ optional($user)->foto ? asset('storage/' . $user->foto) : asset('default.png') }}" alt="Foto Profil"
+  <img src="{{ optional($user)->foto ? url('storage/' . $user->foto) : asset('default.png') }}" alt="Foto Profil"
             class="rounded-full w-48 h-48 object-cover mb-4 border shadow">
         <input type="file" name="foto" class="border rounded px-3 py-2">
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Foto</button>
